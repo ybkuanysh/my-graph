@@ -1,4 +1,5 @@
 import { Application, Graphics, Text, Container } from "pixi.js";
+import { Viewport } from "pixi-viewport";
 
 import {
   forceSimulation,
@@ -10,7 +11,7 @@ import {
 (async () => {
   const app = new Application();
 
-  const graphCanvas = document.getElementById("graph-canvas")
+  const graphCanvas = document.getElementById("graph-canvas");
 
   await app.init({
     canvas: graphCanvas,
@@ -20,6 +21,12 @@ import {
     autoDensity: true,
   });
 
+  const viewport = new Viewport({
+    events: app.renderer.events,
+  });
+
+  viewport.pinch().wheel().drag().decelerate();
+  app.stage.addChild(viewport);
 
   // Настройка стилей для холста
   // app.canvas.style.position = "absolute";
@@ -72,7 +79,7 @@ import {
   const nodeContainer = new Container();
   const textContainer = new Container();
 
-  app.stage.addChild(linkContainer, nodeContainer, textContainer);
+  viewport.addChild(linkContainer, nodeContainer, textContainer);
 
   // Сохраняем ссылки на графические объекты в данных узлов
   data.nodes.forEach((node) => {
