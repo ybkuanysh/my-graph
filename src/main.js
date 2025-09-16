@@ -1,4 +1,4 @@
-import { Application, Graphics, Text } from "pixi.js";
+import { Application, Graphics, Text, Container } from "pixi.js";
 
 import {
   forceSimulation,
@@ -59,15 +59,15 @@ import {
       "link",
       forceLink(data.links)
         .id((d) => d.id)
-        .distance(100)
+        .distance(50)
     )
     .force("charge", forceManyBody().strength(-300))
     .force("center", forceCenter(app.screen.width / 2, app.screen.height / 2));
 
   // Контейнеры для графических элементов
   const linkContainer = new Graphics();
-  const nodeContainer = new Graphics();
-  const textContainer = new Graphics();
+  const nodeContainer = new Container();
+  const textContainer = new Container();
 
   app.stage.addChild(linkContainer, nodeContainer, textContainer);
 
