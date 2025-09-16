@@ -10,18 +10,21 @@ import {
 (async () => {
   const app = new Application();
 
+  const graphCanvas = document.getElementById("graph-canvas")
+
   await app.init({
-    resizeTo: window,
+    canvas: graphCanvas,
+    width: graphCanvas.width,
+    height: graphCanvas.height,
     resolution: 2,
     autoDensity: true,
   });
 
-  document.body.appendChild(app.canvas);
 
   // Настройка стилей для холста
-  app.canvas.style.position = "absolute";
-  app.canvas.style.top = "0";
-  app.canvas.style.left = "0";
+  // app.canvas.style.position = "absolute";
+  // app.canvas.style.top = "0";
+  // app.canvas.style.left = "0";
 
   // Ваши данные
   const data = {
@@ -65,7 +68,7 @@ import {
     .force("center", forceCenter(app.screen.width / 2, app.screen.height / 2));
 
   // Контейнеры для графических элементов
-  const linkContainer = new Graphics();
+  const linkContainer = new Container();
   const nodeContainer = new Container();
   const textContainer = new Container();
 
@@ -83,16 +86,20 @@ import {
     textContainer.addChild(node.textGfx);
   });
 
+  data.links.forEach((link) => {
+    link.gfx = new Graphics();
+    linkContainer.addChild(link.gfx);
+  });
+
   // Событие `tick` — сердце симуляции
   simulation.on("tick", () => {
     // 1. Отрисовка связей
-    linkContainer.clear();
     data.links.forEach((link) => {
-      linkContainer.moveTo(link.source.x, link.source.y);
-      linkContainer.lineTo(link.target.x, link.target.y);
+      link.gfx.clear();
+      link.gfx.moveTo(link.source.x, link.source.y);
+      link.gfx.lineTo(link.target.x, link.target.y);
+      link.gfx.stroke({ width: 2, color: 0x999999 });
     });
-
-    linkContainer.stroke({ width: 2, color: 0x999999 });
 
     // 2. Обновление позиций узлов и текста
     data.nodes.forEach((node) => {
