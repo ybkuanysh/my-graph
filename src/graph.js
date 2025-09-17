@@ -15,8 +15,10 @@ import {
 
   await app.init({
     canvas: graphCanvas,
-    width: graphCanvas.width,
-    height: graphCanvas.height,
+    resizeTo: graphCanvas.parentElement,
+    height: graphCanvas.parentElement.height,
+    width: graphCanvas.parentElement.width,
+    backgroundColor: 0x222222,
     resolution: 2,
     autoDensity: true,
   });
@@ -29,9 +31,9 @@ import {
   app.stage.addChild(viewport);
 
   // Настройка стилей для холста
-  // app.canvas.style.position = "absolute";
-  // app.canvas.style.top = "0";
-  // app.canvas.style.left = "0";
+  app.canvas.style.position = "absolute";
+  app.canvas.style.top = "0";
+  app.canvas.style.left = "0";
 
   // Ваши данные
   const data = {

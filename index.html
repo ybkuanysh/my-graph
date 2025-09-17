@@ -1,14 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Graph</title>
-    <link rel="stylesheet" href="/src/style.css">
-</head>
-<body>
-    <h1 class="text-3xl font-bold underline p-3">Say hello to tailwindcss</h1>
-    <canvas id="graph-canvas" width="800" height="600"></canvas>
-    <script type="module" src="/src/main.js"></script>
-</body>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="flex flex-col items-center main-content">
+        <header
+          class="flex items-center justify-between p-4 bg-white shadow-md w-full"
+        >
+          <h1 class="text-2xl font-bold">Графы</h1>
+          <button
+            id="toggle-sidebar-btn"
+            class="size-9 p-2 bg-white rounded-md outline-2 outline-gray-300 hover:bg-blue-100 hover:outline-4 hover:outline-blue-400 transition-colors duration-200"
+          >
+            <svg
+              class="icon initial-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+            >
+              <!--!Font Awesome Free v6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M224 88a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm64-24c0 26.9-16.5 49.9-40 59.3l0 73.3c23.5 9.5 40 32.5 40 59.3c0 3.4-.3 6.7-.8 10l58.2 34.9c4.5-3.4 9.4-6.1 14.5-8.2l0-73.3c-5.2-2.1-10-4.8-14.5-8.2l-29.4 17.6c-4.7-15.8-13.3-29.9-24.7-41.1l29.4-17.6c-4-25.4 7.7-51.7 31.2-65.4c30.6-17.7 69.8-7.2 87.4 23.4s7.2 69.8-23.4 87.4c-2.6 1.5-5.3 2.8-8 3.9l0 73.3c2.7 1.1 5.4 2.4 8 3.9c30.6 17.7 41.1 56.8 23.4 87.4s-56.8 41.1-87.4 23.4c-23.6-13.6-35.2-40-31.2-65.4l-58.2-34.9c-4.4 3.3-9.3 6.1-14.5 8.2l0 73.3c23.5 9.5 40 32.5 40 59.3c0 35.3-28.7 64-64 64s-64-28.7-64-64c0-26.9 16.5-49.9 40-59.3l0-73.3c-23.5-9.5-40-32.5-40-59.3c0-3.4 .3-6.7 .8-10l-58.2-34.9c-4.5 3.4-9.4 6.1-14.6 8.2l0 73.3c5.1 2.1 10 4.8 14.5 8.2l29.4-17.6c4.7 15.8 13.3 29.9 24.7 41.1L127.2 342c4 25.4-7.6 51.8-31.2 65.4C65.4 425.1 26.3 414.6 8.6 384S1.4 314.3 32 296.6c2.6-1.5 5.3-2.8 8-3.9l0-73.3c-2.7-1.1-5.4-2.4-8-3.9C1.4 197.8-9.1 158.6 8.6 128S65.4 86.9 96 104.6c23.6 13.6 35.2 40 31.2 65.4l58.2 34.9c4.4-3.3 9.3-6.1 14.5-8.2l0-73.3c-23.5-9.5-40-32.5-40-59.3c0-35.3 28.7-64 64-64s64 28.7 64 64zM224 280a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm172-99.2a24 24 0 1 0 -24-41.6 24 24 0 1 0 24 41.6zM84.8 172A24 24 0 1 0 43.2 148a24 24 0 1 0 41.6 24zM248 448a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM43.2 364a24 24 0 1 0 41.6-24A24 24 0 1 0 43.2 364zM396 331.2a24 24 0 1 0 -24 41.6 24 24 0 1 0 24-41.6z"
+              />
+            </svg>
+            <svg
+              class="icon hidden-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 384 512"
+            >
+              <path
+                d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
+              />
+            </svg>
+          </button>
+        </header>
+        <main
+          class="flex flex-col items-center justify-center grow p-4 gap-10 w-fit"
+        >
+          <div class="flex flex-col lg:flex-row gap-16">
+            <div
+              class="p-4 border border-gray-300 rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-200"
+            >
+              <table id="input-table" class="h-fit w-fit"></table>
+            </div>
+            <div
+              class="p-4 border border-gray-300 rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-200"
+            >
+              <table id="result-table" class="h-fit w-fit"></table>
+            </div>
+          </div>
+          <div
+            class="flex w-full border border-gray-300 rounded-2xl p-3 justify-between gap-4 shadow-xs"
+          >
+            <div class="flex items-center gap-2">
+              <label for="num-nodes" class="font-bold ml-2"
+                >Количество узлов:</label
+              >
+              <input
+                type="number"
+                id="num-nodes"
+                min="5"
+                max="11"
+                value="11"
+                class="h-8 w-14 p-1 text-center border-gray-300 rounded-lg outline-3 outline-transparent border-2 focus:border-2 focus:border-blue-400 focus:outline-blue-200 transition-all duration-200"
+              />
+            </div>
+            <div class="flex gap-3">
+              <button
+              id="clear-table"
+                class="px-3 py-2 rounded-xl text-black font-bold outline outline-gray-300 bg-white hover:bg-gray-100 transition-colors duration-200"
+              >
+                Сброс
+              </button>
+              <button
+                class="px-3 py-2 rounded-xl text-white font-bold bg-blue-600 hover:bg-blue-500 transition-colors duration-200"
+              >
+                Следующий шаг
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+      <div id="graph-sidebar" class="sidebar">
+        <div class="relative w-full h-full">
+          <canvas id="graph-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/controls.js"></script>
+    <script type="module" src="/src/graph.js"></script>
+    <script type="module" src="/src/interactive-table.js"></script>
+  </body>
 </html>
