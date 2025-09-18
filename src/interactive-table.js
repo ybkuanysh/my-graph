@@ -1,7 +1,10 @@
 export const inputTable = document.getElementById("input-table");
 const resultTable = document.getElementById("result-table");
+const leftTableTitle = document.getElementById("left-table-title-view");
+const rightTableTitle = document.getElementById("right-table-title-view");
 let tableSize = 11;
 let twoWay = true;
+let iterationCount = 1;
 
 export function drawTable(table, tableSize, data, isResultTable = false) {
   // Создание заголовка столбца
@@ -33,14 +36,16 @@ export function drawTable(table, tableSize, data, isResultTable = false) {
         input.value = (data[i] && data[i][j]) || 0;
         input.className = "table-input";
       } else {
-        input.className = "table-input read-table-value";
         if (i >= j && twoWay) {
           input.disabled = true;
-        }
-        if (i === j) {
+          input.className = "table-input editable";
+          input.value = 0;
+        } else if (i === j) {
           input.disabled = true;
           input.value = 0;
+          input.className = "table-input editable";
         } else {
+          input.className = "table-input read-table-value editable";
           input.value = (data[i] && data[i][j]) || 0;
         }
       }
@@ -49,6 +54,7 @@ export function drawTable(table, tableSize, data, isResultTable = false) {
     }
     table.appendChild(tr);
   }
+  updateTableIfTwoWay();
   udpateTableColorScheme();
 }
 
@@ -94,7 +100,7 @@ export function clearTable() {
 }
 
 export function getTableData() {
-  const tableInputs = document.querySelectorAll(".read-table-value");
+  const tableInputs = document.querySelectorAll(".editable");
   const tableData = [];
 
   for (let i = 0; i < tableSize; i++) {
@@ -116,7 +122,7 @@ export function getTableData() {
 // Функция для обновления таблицы, если включен режим двухсторонней связи
 export function updateTableIfTwoWay() {
   if (!twoWay) return;
-  const tableInputs = document.querySelectorAll(".read-table-value");
+  const tableInputs = document.querySelectorAll(".editable");
   tableInputs.forEach((input, index) => {
     const row = Math.floor(index / tableSize);
     const col = index % tableSize;
@@ -145,4 +151,40 @@ export function checkEditedValue() {
       input.value = 0;
     }
   });
+}
+
+function disableAllTableInputs() {
+  const tableInputs = document.querySelectorAll(".table-input");
+  tableInputs.forEach((input) => {
+    input.disabled = true;
+  });
+  udpateTableColorScheme();
+}
+
+function restoreTableInputs() {
+  const tableInputs = document.querySelectorAll(".read-table-value");
+  tableInputs.forEach((input) => {
+    input.disabled = false;
+  });
+  udpateTableColorScheme();
+}
+export function nextStep() {
+  if (iterationCount === tableSize) return;
+  disableAllTableInputs();
+  iterationCount += 1;
+  leftTableTitle.textContent = rightTableTitle.textContent;
+  rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
+}
+
+export function stepBack() {
+  if (iterationCount === 1) return;
+  iterationCount -= 1;
+  rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
+
+  if (iterationCount === 1) {
+    leftTableTitle.textContent = "Начальные значения";
+    restoreTableInputs();
+  } else {
+    leftTableTitle.textContent = `Транзитом через ${iterationCount - 1} узел`;
+  }
 }

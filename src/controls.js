@@ -1,5 +1,7 @@
 import { drawForceGraph } from "./graph.js";
 import {
+  nextStep,
+  stepBack,
   setupTables,
   getTableData,
   inputTable,
@@ -7,14 +9,13 @@ import {
   updateTableSize,
   updateTableIfTwoWay,
   checkEditedValue,
-  udpateTableColorScheme
+  udpateTableColorScheme,
 } from "./interactive-table.js";
 
 (() => {
   const pageContainer = document.querySelector(".page-container");
   const initialIcon = document.querySelector(".initial-icon");
   const hiddenIcon = document.querySelector(".hidden-icon");
-  const iterationCountView = document.getElementById("iteration-count-view");
   const tableSizeSelector = document.getElementById("num-nodes");
   const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
   const clearTableBtn = document.getElementById("clear-table");
@@ -53,13 +54,14 @@ import {
     drawForceGraph(updatedData);
     udpateTableColorScheme();
   });
-
   // Передвижение курсора по таблице с помощью клавиш стрелок
   inputTable.addEventListener("keydown", (event) => {
     const { key, target } = event;
-    if (!target.classList.contains("read-table-value")) return;
+    if (!target.classList.contains("editable")) return;
 
-    const index = Array.from(inputTable.querySelectorAll(".read-table-value")).indexOf(target);
+    const index = Array.from(
+      inputTable.querySelectorAll(".editable")
+    ).indexOf(target);
     const row = Math.floor(index / inputTable.rows.length);
     const col = index % inputTable.rows.length;
     let newRow = row;
@@ -85,7 +87,7 @@ import {
     }
 
     const newIndex = newRow * inputTable.rows.length + newCol;
-    const newInput = inputTable.querySelectorAll(".read-table-value")[newIndex];
+    const newInput = inputTable.querySelectorAll(".editable")[newIndex];
     if (newInput) {
       newInput.focus();
       event.preventDefault(); // Предотвращаем прокрутку страницы
@@ -105,5 +107,10 @@ import {
     const clearedData = getTableData();
     drawForceGraph(clearedData);
   });
-
+  nextStepBtn.addEventListener("click", () => {
+    nextStep();
+  });
+  stepBackBtn.addEventListener("click", () => {
+    stepBack();
+  });
 })();
