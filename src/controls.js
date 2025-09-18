@@ -10,6 +10,7 @@ import {
   updateTableIfTwoWay,
   checkEditedValue,
   udpateTableColorScheme,
+  udpateAlgorithmIterationView,
 } from "./interactive-table.js";
 
 (() => {
@@ -50,6 +51,7 @@ import {
   inputTable.addEventListener("input", () => {
     checkEditedValue();
     updateTableIfTwoWay();
+    udpateAlgorithmIterationView();
     const updatedData = getTableData();
     drawForceGraph(updatedData);
     udpateTableColorScheme();

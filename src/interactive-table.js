@@ -5,6 +5,7 @@ const rightTableTitle = document.getElementById("right-table-title-view");
 let tableSize = 11;
 let twoWay = true;
 let iterationCount = 1;
+let matrixHistory = [];
 
 export function drawTable(table, tableSize, data, isResultTable = false) {
   // Создание заголовка столбца
@@ -74,8 +75,12 @@ export function udpateTableColorScheme() {
 export function setupTables(dummyData) {
   inputTable.innerHTML = "";
   resultTable.innerHTML = "";
+
+  matrixHistory.push(dummyData);
+  const nextMatrix = floydWarshallStep(dummyData, iterationCount - 1);
+  matrixHistory.push(nextMatrix);
   drawTable(inputTable, tableSize, dummyData);
-  drawTable(resultTable, tableSize, dummyData, true);
+  drawTable(resultTable, tableSize, nextMatrix, true);
 }
 
 export function redrawTables() {
@@ -97,6 +102,8 @@ export function clearTable() {
     input.value = 0;
   });
   udpateTableColorScheme();
+  matrixHistory = [];
+  iterationCount = 1;
 }
 
 export function getTableData() {
@@ -168,23 +175,91 @@ function restoreTableInputs() {
   });
   udpateTableColorScheme();
 }
-export function nextStep() {
-  if (iterationCount === tableSize) return;
-  disableAllTableInputs();
-  iterationCount += 1;
-  leftTableTitle.textContent = rightTableTitle.textContent;
+
+export function udpateAlgorithmIterationView() {
+  matrixHistory = [];
+  resultTable.innerHTML = "";
+  leftTableTitle.textContent = "Начальные значения";
   rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
+  matrixHistory.push(getTableData());
+  const nextMatrix = floydWarshallStep(matrixHistory[0], iterationCount);
+  matrixHistory.push(nextMatrix);
+  drawTable(resultTable, tableSize, nextMatrix, true);
+}
+
+/**
+ * Выполняет один шаг алгоритма Флойда-Уоршелла для проверки достижимости.
+ * @param {Array<Array<number>>} currentMatrix - Матрица текущего шага.
+ * @param {number} k - Промежуточный узел.
+ * @returns {Array<Array<number>>} Новая матрица после итерации.
+ */
+function floydWarshallStep(currentMatrix, k) {
+  const size = currentMatrix.length;
+  const nextMatrix = JSON.parse(JSON.stringify(currentMatrix));
+
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      // Если есть путь из i в k И из k в j, то есть путь из i в j
+      if (currentMatrix[i][k] === 1 && currentMatrix[k][j] === 1) {
+        nextMatrix[i][j] = 1;
+      }
+    }
+  }
+  return nextMatrix;
+}
+
+export function nextStep() {
+  if (iterationCount >= tableSize) return;
+
+  iterationCount += 1;
+  const prevMatrix = matrixHistory[matrixHistory.length - 1];
+  const nextMatrix = floydWarshallStep(prevMatrix, iterationCount);
+  matrixHistory.push(nextMatrix);
+  leftTableTitle.textContent = `Транзитом через ${iterationCount - 1} узел`;
+  rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
+
+  const prevData = matrixHistory[iterationCount - 1];
+  const nextData = matrixHistory[iterationCount];
+
+  inputTable.innerHTML = "";
+  resultTable.innerHTML = "";
+  drawTable(inputTable, tableSize, prevData, true);
+  drawTable(resultTable, tableSize, nextData, true);
+
+  disableAllTableInputs();
 }
 
 export function stepBack() {
-  if (iterationCount === 1) return;
+  if (iterationCount == 1) return;
   iterationCount -= 1;
+
   rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
+  inputTable.innerHTML = "";
+  resultTable.innerHTML = "";
 
   if (iterationCount === 1) {
+    const initialAdjacencyMatrix = matrixHistory[0];
+    const nextData = matrixHistory[1];
+    drawTable(inputTable, tableSize, initialAdjacencyMatrix);
+    drawTable(resultTable, tableSize, nextData, true);
     leftTableTitle.textContent = "Начальные значения";
     restoreTableInputs();
   } else {
+    const prevData = matrixHistory[iterationCount - 1];
+    const nextData = matrixHistory[iterationCount];
+    showMatrix(prevData);
+    showMatrix(nextData);
+    drawTable(inputTable, tableSize, prevData, true);
+    drawTable(resultTable, tableSize, nextData, true);
     leftTableTitle.textContent = `Транзитом через ${iterationCount - 1} узел`;
   }
+  matrixHistory.pop();
+}
+
+function showMatrix(matrix) {
+  console.log("Matrix:");
+  matrix.forEach((row) => {
+    console.log(row.join(" "));
+  });
+  console.log("\n");
 }
