@@ -182,7 +182,7 @@ export function udpateAlgorithmIterationView() {
   leftTableTitle.textContent = "Начальные значения";
   rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
   matrixHistory.push(getTableData());
-  const nextMatrix = floydWarshallStep(matrixHistory[0], iterationCount);
+  const nextMatrix = floydWarshallStep(matrixHistory[0], iterationCount - 1);
   matrixHistory.push(nextMatrix);
   drawTable(resultTable, tableSize, nextMatrix, true);
 }
@@ -199,10 +199,13 @@ function floydWarshallStep(currentMatrix, k) {
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
+      let msg = `Проверка пути из ${i} в ${j} через ${k}`;
       // Если есть путь из i в k И из k в j, то есть путь из i в j
       if (currentMatrix[i][k] === 1 && currentMatrix[k][j] === 1) {
+        msg += " ОТМЕЧЕНО 1"
         nextMatrix[i][j] = 1;
       }
+      console.log(msg);
     }
   }
   return nextMatrix;
@@ -210,10 +213,10 @@ function floydWarshallStep(currentMatrix, k) {
 
 export function nextStep() {
   if (iterationCount >= tableSize) return;
-
   iterationCount += 1;
+
   const prevMatrix = matrixHistory[matrixHistory.length - 1];
-  const nextMatrix = floydWarshallStep(prevMatrix, iterationCount);
+  const nextMatrix = floydWarshallStep(prevMatrix, iterationCount - 1);
   matrixHistory.push(nextMatrix);
   leftTableTitle.textContent = `Транзитом через ${iterationCount - 1} узел`;
   rightTableTitle.textContent = `Транзитом через ${iterationCount} узел`;
